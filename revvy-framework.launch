@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   
-  <node name="revvyNode" pkg="revvyframework_ros" type="revvyframework_ros_revvy" output="screen">
+  <node name="revvyNode" pkg="revvyframework_ros" type="revvy.py" output="screen">
   </node>
   
 </launch>
