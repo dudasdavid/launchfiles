@@ -28,5 +28,8 @@
     <param name="pub_drawings" value="true"/>
     <param name="pub_debug_output" value="true"/>
   </node>
+  
+    <node name="revvyNode" pkg="revvyframework_ros" type="keyboardRemote.py" output="screen">
+  </node>
 
 </launch>

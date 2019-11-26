@@ -21,5 +21,8 @@
     <param name="angle_compensate"    type="bool"   value="true"/>
   </node>
   
+  <node name="revvyNode" pkg="revvyframework_ros" type="revvy.py" output="screen">
+  </node>
+  
 
 </launch>
