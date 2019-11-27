@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="tf_map_scanmatch_transform_frame_name" default="scanmatcher_frame"/>
+    <arg name="base_frame" default="base_link"/>
+    <arg name="odom_frame" default="odom"/>
+    <arg name="pub_map_odom_transform" default="true"/>
+    <arg name="scan_subscriber_queue_size" default="5"/>
+    <arg name="scan_topic" default="scan"/>
+    <arg name="map_size" default="1024"/>
+
+    <!-- include file="$(find rplidar_ros)/launch/rplidar.launch"/ -->
+    <!--include file="$(find r18_description)/launch/upload.launch"><arg name="robot" value="r18r1"/></include !-->
+
+    <!-- node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="50.0"/>
+        <param name="tf_prefix" type="string" value=""/>
+    </node -->
+
+      <!-- node pkg="tf" type="static_transform_publisher" name="base_frame_2_laser" args="0 0 0.05 0 0 0 1 /base_link /laser 50" / -->
+    <!-- node pkg="tf" type="static_transform_publisher" name="map_baselink_broadcaster" args="0 0 0 0 0 0 map base_link 100"/-->
+    <!--1 node pkg="tf" type="static_transform_publisher" name="map_odom_footprint" args="0 0 0 0 0 0 map odom 50"/ -->
+    <!--2 node pkg="tf" type="static_transform_publisher" name="odom_to_base_footprint" args="0 0 0 0 0 0 odom base_footprint 50"/ -->
+    <!-- node pkg="tf" type="static_transform_publisher" name="base_footprint_to_laser" args="0 0 0 0 0 0 base_footprint laser 50"/ -->
+
+    <!--3 node pkg="tf" type="static_transform_publisher" name="base_link_to_stabilized" args="0 0 0 0 0 0 base_link base_link_stabilized 50"/-->
+    <!--4 node pkg="tf" type="static_transform_publisher" name="base_link_stabilized_to_laser" args="0 0 0 0 0 0 base_link_stabilized laser 50"/-->
+    <!--5 node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0 0 0 0 base_footprint base_link 50"/-->
+    <!-- node pkg="tf" type="static_transform_publisher" name="laser_to_base_footprint" args="0 0 0 0 0 0 laser base_footprint 50"/ -->
+    <!--6 node pkg="tf" type="static_transform_publisher" name="spine2_to_laser" args="0 0 0 0 0 0 base_link head_gimbal_motor3_link 50"/ -->
+    <!--7 node pkg="tf" type="static_transform_publisher" name="spinexto_laser" args="0 0 0 0 0 0 base_link spine_link 50"/ -->
+    <!--8 node pkg="tf" type="static_transform_publisher" name="head_link_to_neck_link" args="0 0 0 0 0 0 head_link neck_link 50"/ -->
+    <!--9 node pkg="tf" type="static_transform_publisher" name="base_footprint_to_laser" args="0 0 0 0 0 0 base_link spine_rpi_laser_static_link 50"/ -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="spine2_to_laser" args="0 0 0 0 0 0 corrected_laser_link laser 50"/> -->
+
+    <node pkg="tf" type="static_transform_publisher" name="base_link_to_scan" args="0 0 0.20 0 0 0 1 /base_link /scan 100" />
+    <node pkg="tf" type="static_transform_publisher" name="laser" args="0 0 0 0 0 0 base_link laser 100" />
+
+    <!-- rosrun tf static_transform_publisher  0 0 0 0 0 0 base_link scan 1 -->
+    <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
+
+        <!-- Frame names -->
+        <param name="map_frame" value="map"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="odom_frame" value="$(arg odom_frame)"/>
+
+        <!-- Tf use -->
+        <param name="use_tf_scan_transformation" value="true"/>
+        <param name="use_tf_pose_start_estimate" value="false"/>
+        <param name="pub_map_odom_transform" value="$(arg pub_map_odom_transform)"/>
+
+        <!-- Map size / start point -->
+        <param name="map_resolution" value="0.050"/>
+        <param name="map_size" value="$(arg map_size)"/>
+        <param name="map_start_x" value="0.5"/>
+        <param name="map_start_y" value="0.5"/>
+        <param name="map_multi_res_levels" value="2"/>
+
+        <!-- Map update parameters -->
+        <param name="update_factor_free" value="0.4"/>
+        <param name="update_factor_occupied" value="0.9"/>
+        <!--param name="map_update_distance_thresh" value="0.30"/-->
+        <param name="map_update_distance_thresh" value="0.10"/>
+        <param name="map_update_angle_thresh" value="0.15"/>
+        <param name="laser_z_min_value" value="-0.5"/>
+        <param name="laser_z_max_value" value="2.0"/>
+
+        <!-- Advertising config -->
+        <param name="advertise_map_service" value="true"/>
+
+        <param name="scan_subscriber_queue_size" value="$(arg scan_subscriber_queue_size)"/>
+        <param name="scan_topic" value="$(arg scan_topic)"/>
+
+        <!-- Debug parameters -->
+        <!--
+          <param name="output_timing" value="false"/>
+          <param name="pub_drawings" value="true"/>
+          <param name="pub_debug_output" value="true"/>
+        -->
+        <param name="tf_map_scanmatch_transform_frame_name" value="$(arg tf_map_scanmatch_transform_frame_name)"/>
+    </node>
+    
+    
+    <arg name="ticks_per_meter" value="1800" />
+    <arg name="wheel_separation" value="0.1" />
+    
+    <node name="controller" pkg="diff_drive" type="diff_drive_controller"
+          output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        max_motor_speed: 3000
+        timeout: 1.0
+      </rosparam>
+    </node>
+    
+    <node name="odom_publisher" pkg="diff_drive" type="diff_drive_odometry"
+          output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+      </rosparam>
+    </node>
+
+
+    <!-- include file="$(find r18_mapping)/launch/save_mapping_stuff.launch" /-->
+
+
+</launch>
