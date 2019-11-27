@@ -32,20 +32,7 @@
     <param name="pub_debug_output" value="true"/>
   </node>
   
-  <node name="key_teleop" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
-  </node>
-  
-    <!-- Publish the robot state -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher"
-        type="robot_state_publisher">
-    <param name="publish_frequency" value="10.0"/>
-  </node>
-
-  <!-- Provide simulated control of the robot joint angles -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher"
-        type="joint_state_publisher">
-    <param name="use_gui" value="False" />
-    <param name="rate" value="10.0"/>
+  <node name="revvy_teleop" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
   </node>
 
   <node name="controller" pkg="diff_drive" type="diff_drive_controller"
