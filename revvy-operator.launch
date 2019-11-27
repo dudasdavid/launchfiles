@@ -5,6 +5,8 @@
   <node pkg="tf" type="static_transform_publisher" name="laser" args="0 0 0 0 0 0 base_link laser 100" />
 
   <node name="rviz" pkg="rviz" type="rviz" />
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="-d ~/.rviz/revvy_default.rviz" />
 
   <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
     <param name="base_frame" value="base_link" />
