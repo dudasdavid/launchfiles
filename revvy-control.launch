@@ -4,18 +4,6 @@
   <arg name="ticks_per_meter" value="1800" />
   <arg name="wheel_separation" value="0.1" />
   
-  <!-- Publish the robot state -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher"
-        type="robot_state_publisher">
-    <param name="publish_frequency" value="10.0"/>
-  </node>
-
-  <!-- Provide simulated control of the robot joint angles -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher"
-        type="joint_state_publisher">
-    <param name="use_gui" value="False" />
-    <param name="rate" value="10.0"/>
-  </node>
 
   <node name="controller" pkg="diff_drive" type="diff_drive_controller"
         output="screen">
