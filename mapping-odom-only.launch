@@ -2,6 +2,8 @@
 
 <launch>
 
+    <node pkg="tf" type="static_transform_publisher" name="laser" args="0 0 0 0 0 0 base_link laser 50" />
+
     
     <arg name="ticks_per_meter" value="1800" />
     <arg name="wheel_separation" value="0.1" />
