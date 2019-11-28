@@ -6,7 +6,7 @@
 
     
     <arg name="ticks_per_meter" value="1800" />
-    <arg name="wheel_separation" value="0.107" />
+    <arg name="wheel_separation" value="0.11" />
     
     <node name="controller" pkg="diff_drive" type="diff_drive_controller"
           output="screen">
