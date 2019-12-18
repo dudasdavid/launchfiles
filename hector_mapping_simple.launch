@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="tf" type="static_transform_publisher" name="laser" args="-0.005 0.005 0 0 0 0 base_link laser 50" />
+
+    <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find revvyframework_ros)/resources/revvy_default.rviz" />
+
+    <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
+        <param name="base_frame" value="base_link" />
+        <param name="odom_frame" value="base_link"/>
+        <param name="output_timing" value="false"/>
+        <param name="use_tf_scan_transformation" value="true"/>
+        <param name="use_tf_pose_start_estimate" value="false"/>
+        <param name="scan_topic" value="scan"/>
+        <!-- Map size / start point -->
+        <param name="map_resolution" value="0.025"/>
+        <param name="map_size" value="2048"/>
+        <param name="map_start_x" value="0.5"/>
+        <param name="map_start_y" value="0.5" />
+        <!--param name="laser_z_min_value" value="-2.5" /-->
+        <!--param name="laser_z_max_value" value="3.5" /-->
+        <!-- Map update parameters -->
+        <param name="update_factor_free" value="0.4"/>
+        <param name="update_factor_occupied" value="0.7" />    
+        <param name="map_update_distance_thresh" value="0.6"/>
+        <param name="map_update_angle_thresh" value="0.9" />
+        <param name="pub_map_odom_transform" value="true"/>
+        <param name="pub_drawings" value="true"/>
+        <param name="pub_debug_output" value="true"/>
+    </node>
+  
+    <node name="revvy_teleop" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
+    </node>
+  
+    <arg name="ticks_per_meter" value="1800" />
+    <arg name="wheel_separation" value="0.11" />
+  
+    <node name="controller" pkg="diff_drive" type="diff_drive_controller"
+        output="screen">
+        <rosparam subst_value="true">
+            ticks_per_meter: $(arg ticks_per_meter)
+            wheel_separation: $(arg wheel_separation)
+            max_motor_speed: 3000
+            timeout: 1.0
+        </rosparam>
+    </node>
+
+
+</launch>
