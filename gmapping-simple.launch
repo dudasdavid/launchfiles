@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <node pkg="tf" type="static_transform_publisher" name="laser" args="-0.005 0.005 0 0 0 0 base_link laser 50" />
+    
+    <arg name="ticks_per_meter" value="1800" />
+    <arg name="wheel_separation" value="0.11" />
+    
+    <node name="controller" pkg="diff_drive" type="diff_drive_controller"
+          output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        max_motor_speed: 3000
+        timeout: 1.0
+      </rosparam>
+    </node>
+    
+    <node name="odom_publisher" pkg="diff_drive" type="diff_drive_odometry"
+          output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        odom_frame_id: "odom"
+      </rosparam>
+    </node>
+    
+    <node name="revvy_teleop" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
+    </node>
+  
+
+  
+    <node name="rviz" pkg="rviz" type="rviz" />
+
+</launch> 
