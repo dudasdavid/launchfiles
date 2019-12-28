@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <node pkg="gmapping" type="slam_gmapping" name="gmapping" output="screen" >
-       <param name="odom_frame" value="odom" />
+       <param name="odom_frame" value="odom_combined" />
        <param name="base_frame" value="base_link" />
         <!-- Process 1 out of every this many scans (set it to a higher number to skip more scans)  -->
         <param name="throttle_scans" value="1"/>
