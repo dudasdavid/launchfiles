@@ -33,6 +33,7 @@
   <arg name="teleop_config" default="$(find revvy_teleop_ros)/config/joy_teleop.yaml" />
   <rosparam file="$(arg teleop_config)" command="load" />
   <node pkg="revvy_teleop_ros" type="joy_teleop.py" name="revvy_teleop_joy">
+      <remap from="cmd_vel" to="joy/cmd_vel" />
   </node>
   
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
@@ -52,6 +53,8 @@
   <node pkg="joy" type="joy_node" name="joy_node">
       <rosparam subst_value="true">
         dev: "/dev/input/js1"
+        autorepeat_rate: 20
+        coalesce_interval: 0.05
       </rosparam>
   </node>  
 

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <node pkg="tf" type="static_transform_publisher" name="laser" args="-0.005 0.005 0 0 0 0 base_link laser 50" />
+    
+    <arg name="ticks_per_meter" value="1800" />
+    <arg name="wheel_separation" value="0.11" />
+    
+    <node name="controller" pkg="diff_drive" type="diff_drive_controller"
+          output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        max_motor_speed: 3000
+        timeout: 1.0
+      </rosparam>
+    </node>
+    
+    <node name="odom_publisher" pkg="diff_drive" type="diff_drive_odometry"
+          output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        base_frame_id: "base_footprint"
+      </rosparam>
+    </node>
+    
+  <node name="revvy_teleop_key" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
+      <remap from="cmd_vel" to="key/cmd_vel" />
+  </node>
+    
+  <arg name="teleop_config" default="$(find revvy_teleop_ros)/config/joy_teleop.yaml" />
+  <rosparam file="$(arg teleop_config)" command="load" />
+  <node pkg="revvy_teleop_ros" type="joy_teleop.py" name="revvy_teleop_joy">
+  </node>
+  
+  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="output_frame" value="odom_combined"/>
+    <param name="base_footprint_frame" value="base_link"/>
+    <param name="freq" value="30.0"/>
+    <param name="sensor_timeout" value="1.0"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="true"/>
+    <param name="vo_used" value="false"/>
+    <param name="debug" value="false"/>
+    <param name="self_diagnose" value="false"/>
+  </node>
+  
+  <node name="rviz" pkg="rviz" type="rviz" />
+    
+  <node pkg="joy" type="joy_node" name="joy_node">
+      <rosparam subst_value="true">
+        dev: "/dev/input/js1"
+        autorepeat_rate: 20
+        coalesce_interval: 0.05
+      </rosparam>
+  </node>  
+
+
+</launch>
