@@ -17,15 +17,6 @@
       </rosparam>
     </node>
     
-    <node name="odom_publisher" pkg="diff_drive" type="diff_drive_odometry"
-          output="screen">
-      <rosparam subst_value="true">
-        ticks_per_meter: $(arg ticks_per_meter)
-        wheel_separation: $(arg wheel_separation)
-        base_frame_id: "base_footprint"
-      </rosparam>
-    </node>
-    
   <node name="revvy_teleop_key" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
       <remap from="cmd_vel" to="key/cmd_vel" />
   </node>
