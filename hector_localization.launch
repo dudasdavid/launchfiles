@@ -29,6 +29,11 @@
   <node name="revvy_teleop_key" pkg="revvy_teleop_ros" type="key_teleop.py" output="screen">
       <remap from="cmd_vel" to="key/cmd_vel" />
   </node>
+    
+  <arg name="teleop_config" default="$(find revvy_teleop_ros)/config/joy_teleop.yaml" />
+  <rosparam file="$(arg teleop_config)" command="load" />
+  <node pkg="revvy_teleop_ros" type="joy_teleop.py" name="revvy_teleop_joy">
+  </node>
   
   <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
     <param name="output_frame" value="odom_combined"/>
@@ -48,14 +53,7 @@
       <rosparam subst_value="true">
         dev: "/dev/input/js1"
       </rosparam>
-  </node>
-  
-  <arg name="teleop_config" default="$(find revvy_teleop_ros)/config/joy_teleop.yaml" />
-
-  <rosparam file="$(arg teleop_config)" command="load" />
-  <node pkg="revvy_teleop_ros" type="joy_teleop.py" name="revvy_teleop_joy">
-  </node>
-  
+  </node>  
 
 
 </launch>
