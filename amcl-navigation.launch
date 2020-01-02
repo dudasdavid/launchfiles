@@ -1,7 +1,7 @@
 <launch>
 
   <!-- Map server -->
-  <arg name="map_file" default="/home/david/catkin_ws/maps/szoba.yaml"/>
+  <arg name="map_file" default="/home/david/catkin_ws/maps/iroda.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
   </node> 
 
@@ -66,9 +66,9 @@
     <rosparam file="/home/david/catkin_ws/maps/param/costmap_common_params.yaml" command="load" ns="local_costmap" />   
     <rosparam file="/home/david/catkin_ws/maps/param/local_costmap_params.yaml" command="load" />   
     <rosparam file="/home/david/catkin_ws/maps/param/global_costmap_params.yaml" command="load" />
-    <rosparam file="/home/david/catkin_ws/maps/param/dwa_local_planner_params.yaml" command="load" />
+    <rosparam file="/home/david/catkin_ws/maps/param/teb_local_planner_params.yaml" command="load" />
     <rosparam file="/home/david/catkin_ws/maps/param/move_base_params.yaml" command="load" />
-    <rosparam file="/home/david/catkin_ws/maps/param/global_planner_params.yaml" command="load" />
+    <rosparam file="/home/david/catkin_ws/maps/param/navfn_global_planner_params.yaml" command="load" />
     <!-- external params file that could be loaded into the move_base namespace -->
     <rosparam file="$(arg custom_param_file)" command="load" />
     
@@ -77,7 +77,6 @@
     <param name="global_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
     <param name="local_costmap/global_frame" value="$(arg odom_frame_id)"/>
     <param name="local_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
-    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame_id)"/>
 
   </node>
 
