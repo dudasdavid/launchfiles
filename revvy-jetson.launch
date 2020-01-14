@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="ticks_per_meter" value="1800" />
+  <arg name="wheel_separation" value="0.11" />
+    
+  <node name="controller" pkg="diff_drive" type="diff_drive_controller"
+        output="screen">
+    <rosparam subst_value="true">
+      ticks_per_meter: $(arg ticks_per_meter)
+      wheel_separation: $(arg wheel_separation)
+      max_motor_speed: 3000
+      timeout: 1.0
+    </rosparam>
+  </node>
+    
+  <node name="odom_publisher" pkg="diff_drive" type="diff_drive_odometry" output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        base_frame_id: "base_footprint"
+      </rosparam>
+  </node>
+  
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+    <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+    <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+    <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+    <param name="frame_id"            type="string" value="laser"/>
+    <param name="inverted"            type="bool"   value="false"/>
+    <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
+  
+  <node name="revvyNode" pkg="revvyframework_ros" type="revvy.py" output="screen">
+  </node>
+  
+
+</launch>
