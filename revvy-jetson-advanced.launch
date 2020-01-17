@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="ticks_per_meter" value="1800" />
+  <arg name="wheel_separation" value="0.11" />
+  <arg name="wheel_separation_length" value="0.13" />
+    
+  <node name="controller" pkg="mecanum_drive" type="mecanum_drive_controller"
+        output="screen">
+    <rosparam subst_value="true">
+      ticks_per_meter: $(arg ticks_per_meter)
+      wheel_separation: $(arg wheel_separation)
+      wheel_separation_length: $(arg wheel_separation_length)
+      max_motor_speed: 3000
+      timeout: 1.0
+    </rosparam>
+  </node>
+    
+  <node name="odom_publisher" pkg="mecanum_drive" type="mecanum_drive_odometry" output="screen">
+      <rosparam subst_value="true">
+        ticks_per_meter: $(arg ticks_per_meter)
+        wheel_separation: $(arg wheel_separation)
+        wheel_separation_length: $(arg wheel_separation_length)
+        base_frame_id: "base_footprint"
+      </rosparam>
+  </node>
+  
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+    <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+    <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+    <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+    <param name="frame_id"            type="string" value="laser"/>
+    <param name="inverted"            type="bool"   value="false"/>
+    <param name="angle_compensate"    type="bool"   value="true"/>
+  </node>
+  
+  <node pkg="tf" type="static_transform_publisher" name="laser" args="-0.06 0.005 0 0 0 0 base_link laser 20" />
+  
+  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <param name="output_frame" value="odom_combined"/>
+    <param name="base_footprint_frame" value="base_link"/>
+    <param name="freq" value="20.0"/>
+    <param name="sensor_timeout" value="1.0"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="true"/>
+    <param name="vo_used" value="false"/>
+    <param name="debug" value="false"/>
+    <param name="self_diagnose" value="false"/>
+  </node>
+  
+  
+  <node name="revvyNode" pkg="revvyframework_ros" type="revvy.py" output="screen">
+  </node>
+
+</launch>
