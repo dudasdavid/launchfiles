@@ -51,5 +51,21 @@
   
   <node name="revvyNode" pkg="revvyframework_ros" type="revvy.py" output="screen">
   </node>
+  
+  <node pkg="jetson_camera" type="jetson_camera_node" name="main_camera" clear_params="true" output="screen">
+    <param name="cap_width" value="3264"/>
+    <param name="cap_height" value="2464"/>
+    <param name="width" value="320"/>
+    <param name="height" value="240"/>
+    <param name="fps" value="10"/>
+    <param name="flip_method" value="2"/>
+    <param name="grayscale" value="0"/>
+    <param name="output_resize" value="0"/>
+    
+
+    <param name="frame_id" value="main_camera_optical"/>
+    <param name="camera_info_url" value="file://$(find jetson_camera)/camera_info/raspicam_v2.yaml"/>
+  </node>
+
 
 </launch>
