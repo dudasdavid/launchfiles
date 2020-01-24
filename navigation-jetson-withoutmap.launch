@@ -1,0 +1,43 @@
+<launch>
+
+  <!-- Map server -->
+  <!-- 
+  <arg name="map_file" default="/home/david/catkin_ws/maps/office20200123.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+  </node>  -->
+
+  <arg name="use_map_topic"   default="false"/>
+  <arg name="scan_topic"      default="scan"/> 
+  <arg name="initial_pose_x"  default="0.0"/>
+  <arg name="initial_pose_y"  default="0.0"/>
+  <arg name="initial_pose_a"  default="0.0"/>
+  <arg name="odom_frame_id"   default="odom_combined"/>
+  <arg name="base_frame_id"   default="base_link"/>
+  <arg name="global_frame_id" default="map"/>
+
+    
+
+  <arg name="odom_topic" default="odom" />
+  <arg name="laser_topic" default="scan" />
+  <arg name="custom_param_file" default="/home/david/catkin_ws/maps/param/dummy.yaml"/>
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="/home/david/catkin_ws/maps/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="/home/david/catkin_ws/maps/param/costmap_common_params.yaml" command="load" ns="local_costmap" />   
+    <rosparam file="/home/david/catkin_ws/maps/param/local_costmap_params.yaml" command="load" />   
+    <rosparam file="/home/david/catkin_ws/maps/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="/home/david/catkin_ws/maps/param/teb_local_planner_params.yaml" command="load" />
+    <rosparam file="/home/david/catkin_ws/maps/param/move_base_params.yaml" command="load" />
+    <rosparam file="/home/david/catkin_ws/maps/param/navfn_global_planner_params.yaml" command="load" />
+    <!-- external params file that could be loaded into the move_base namespace -->
+    <rosparam file="$(arg custom_param_file)" command="load" />
+    
+    <!-- reset frame_id parameters using user input data -->
+    <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="local_costmap/global_frame" value="$(arg odom_frame_id)"/>
+    <param name="local_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+
+  </node>
+
+</launch>
