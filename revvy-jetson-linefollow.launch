@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="ticks_per_meter" value="1800" />
+  <arg name="wheel_separation" value="0.11" />
+  <arg name="wheel_separation_length" value="0.13" />
+    
+  <node name="controller" pkg="mecanum_drive" type="mecanum_drive_controller"
+        output="screen">
+    <rosparam subst_value="true">
+      ticks_per_meter: $(arg ticks_per_meter)
+      wheel_separation: $(arg wheel_separation)
+      wheel_separation_length: $(arg wheel_separation_length)
+      max_motor_speed: 3000
+      timeout: 1.0
+    </rosparam>
+  </node>
+    
+
+  
+  
+  <node name="revvyNode" pkg="revvyframework_ros" type="revvy.py" output="screen">
+  </node>
+  
+  <node pkg="jetson_camera" type="jetson_camera_node" name="main_camera" clear_params="true" output="screen">
+    <param name="cap_width" value="3264"/>
+    <param name="cap_height" value="2464"/>
+    <param name="width" value="320"/>
+    <param name="height" value="240"/>
+    <param name="fps" value="20"/>
+    <param name="flip_method" value="2"/>
+    <param name="grayscale" value="0"/>
+    <param name="output_resize" value="0"/>
+    
+
+    <param name="frame_id" value="main_camera_optical"/>
+    <param name="camera_info_url" value="file://$(find jetson_camera)/camera_info/raspicam_v2.yaml"/>
+    
+  </node>
+  
+  <param name="/main_camera/image_raw/compressed/format" type="string" value="jpeg" />
+  <param name="/main_camera/image_raw/compressed/jpeg_quality" type="int" value="30" />
+  <param name="/main_camera/image_raw/compressed/png_level" type="int" value="9" />
+
+
+  <node pkg="line_follower" type="line_detector.py" name="line_detector" clear_params="true" output="screen"> 
+  </node>
+  
+  <node pkg="line_follower" type="line_controller.py" name="line_controller" clear_params="true" output="screen"> 
+  </node>
+  
+  <node name="republish_line" type="republish" pkg="image_transport" output="screen" args="raw in:=/line_image/image_raw  out:=/line_image/image_compressed" />
+  <node name="republish_mask" type="republish" pkg="image_transport" output="screen" args="raw in:=/line_image/mask_raw  out:=/line_image/mask_compressed" />
+
+  <param name="/line_image/image_compressed/compressed/format" type="string" value="jpeg" />
+  <param name="/line_image/image_compressed/compressed/jpeg_quality" type="int" value="30" />
+  <param name="/line_image/image_compressed/compressed/png_level" type="int" value="9" />
+
+  <param name="/line_image/mask_compressed/compressed/format" type="string" value="jpeg" />
+  <param name="/line_image/mask_compressed/compressed/jpeg_quality" type="int" value="30" />
+
+</launch>
